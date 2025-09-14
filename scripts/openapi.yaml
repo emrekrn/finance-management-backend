@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: FinTrack API
+  version: 1.0.0
+  description: API for managing personal finance, including incomes, expenses, and analytics overview.
+  contact:
+    name: FinTrack Support
+
+# Apply the scheme to **every** operation in the spec
+security:
+  - bearerAuth: []
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+tags:
+  - name: Transactions
+    description: Operations related to financial transactions such as incomes and expenses.
+
+paths:
+  
+
+
+  /users/{userId}/expenses:
+    post:
+      tags:
+      - Transactions
+      summary: Create an expense
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionInput'
+      responses:
+        '201':
+          description: Expense created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+  /users/{userId}/incomes:
+    post:
+      tags:
+      - Transactions
+      summary: Create an income
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionInput'
+      responses:
+        '201':
+          description: Income created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+  /users/{userId}/transactions/overview:
+    get:
+      tags:
+      - Transactions
+      summary: Get overview of all incomes and expenses
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of transactions (incomes and expenses)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+
+components:
+  securitySchemes:
+    bearerAuth:                # ← choose any name you like
+      type: http
+      scheme: bearer           # ← tells tools to use the header
+      bearerFormat: JWT        # ← purely informational
+  schemas:
+    TransactionInput:
+      type: object
+      required:
+        - announcementDate
+        - realisationDate
+        - amount
+        - currency
+        - category
+        - description
+      properties:
+        announcementDate:
+          type: string
+          format: date
+        realisationDate:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: float
+        currency:
+          type: string
+          example: USD
+        category:
+          type: string
+        description:
+          type: string
+
+    Transaction:
+      allOf:
+        - $ref: '#/components/schemas/TransactionInput'
+        - type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+              enum: [income, expense]
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
