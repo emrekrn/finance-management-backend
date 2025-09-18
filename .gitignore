@@ -152,5 +152,5 @@ packages/*/node_modules/
 ###
 # Own
 ###
-frontend/
+.frontend/
 # End of file
