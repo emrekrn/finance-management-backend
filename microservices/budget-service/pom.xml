@@ -135,6 +135,7 @@
                                 <delegatePattern>false</delegatePattern>
                                 <generateConstructorWithAllArgs>true</generateConstructorWithAllArgs>
                                 <useJakartaEe>true</useJakartaEe>
+                                <interfaceOnly>true</interfaceOnly>
                             </configOptions>
                         </configuration>
                     </execution>
