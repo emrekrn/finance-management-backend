@@ -11,134 +11,365 @@ security:
   - bearerAuth: []
 
 servers:
-  - url: http://localhost:8080/api/v1
+  - url: http://localhost:8080/api
     description: Local development server
 tags:
   - name: Transactions
     description: Operations related to financial transactions such as incomes and expenses.
 
 paths:
-  
-
-
-  /users/{userId}/expenses:
-    post:
-      tags:
-      - Transactions
-      summary: Create an expense
-      parameters:
-        - name: userId
-          required: true
-          in: path
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TransactionInput'
-      responses:
-        '201':
-          description: Expense created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Transaction'
-
-  /users/{userId}/incomes:
-    post:
-      tags:
-      - Transactions
-      summary: Create an income
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TransactionInput'
-      responses:
-        '201':
-          description: Income created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Transaction'
-
-  /users/{userId}/transactions/overview:
+  /transactions:
     get:
+      operationId: getTransactions
+      description: Get transactions by year and further optional filters.
       tags:
-      - Transactions
-      summary: Get overview of all incomes and expenses
+        - Transaction
       parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/FromYearParam'
+        - $ref: '#/components/parameters/ToYearParam'
+        - $ref: '#/components/parameters/MinAmountParam'
+        - $ref: '#/components/parameters/MaxAmountParam'
+        - $ref: '#/components/parameters/CategoryParam'
+        - $ref: '#/components/parameters/ReceiverParam'
       responses:
         '200':
-          description: List of transactions (incomes and expenses)
+          description: List of matching transactions
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Transaction'
+    post:
+      operationId: createTransaction
+      description: Create a new transaction.
+      tags:
+        - Transaction
+      summary: Create transaction
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTransactionRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/CreateTransactionResponse'
+    put:
+      operationId: updateTransaction
+      description: Update an existing transaction.
+      tags:
+        - Transaction
+      summary: Update transaction
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateTransactionRequest'
+      responses:
+        200:
+          description: Updated transaction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+    delete:
+      operationId: deleteTransaction
+      description: Delete an existing transaction.
+      tags:
+        - Transaction
+      summary: Delete transaction
+      parameters:
+        - $ref: '#/components/parameters/TransactionId'
+      responses:
+        200:
+          description: Transaction deleted successfully
+
+  /categories:
+    get:
+      operationId: getCategories
+      description: Get all categories.
+      tags:
+        - Category
+      responses:
+        '200':
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Category'
+    post:
+      operationId: createCategory
+      description: Create a new category.
+      tags:
+        - Category
+      summary: Create category
+      requestBody:
+        $ref: '#/components/requestBodies/CreateCategoryRequest'
+      responses:
+        '200':
+          description: Created category
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+    put:
+      operationId: updateCategory
+      description: Update an existing category.
+      tags:
+        - Category
+      summary: Update category
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateCategoryRequest'
+      responses:
+        '200':
+          description: Updated category
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+    delete:
+      operationId: deleteCategory
+      description: Delete an existing category.
+      tags:
+        - Category
+      parameters:
+        - $ref: '#/components/parameters/CategoryId'
+      responses:
+        200:
+          description: Transaction deleted successfully
+
+
+
 
 components:
+  requestBodies:
+    CreateTransactionRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateTransactionReq'
+      description: Transaction to be created
+      required: true
+
+    UpdateTransactionRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateTransactionReq'
+      description: Transaction to be updated
+      required: true
+
+    CreateCategoryRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateCategoryReq'
+      description: Category to be created
+      required: true
+
+    UpdateCategoryRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateTransactionReq'
+      description: Category to be updated
+      required: true
+
+  responses:
+    CreateTransactionResponse:
+      description: Transaction created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Transaction'
+
+  parameters:
+    FromYearParam:
+      name: fromYear
+      in: query
+      schema:
+        $ref: '#/components/schemas/FromYear'
+
+    ToYearParam:
+      name: toYear
+      in: query
+      schema:
+        $ref: '#/components/schemas/ToYear'
+
+    MinAmountParam:
+      name: minAmount
+      in: query
+      schema:
+        $ref: '#/components/schemas/MinAmount'
+
+    MaxAmountParam:
+      name: maxAmount
+      in: query
+      schema:
+        $ref: '#/components/schemas/MaxAmount'
+
+    CategoryParam:
+      name: category
+      in: query
+      schema:
+        $ref: '#/components/schemas/Category'
+
+    ReceiverParam:
+      name: receiver
+      in: query
+      schema:
+        $ref: '#/components/schemas/Receiver'
+
+    TransactionId:
+      name: transactionId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/TransactionId'
+
+    CategoryId:
+      name: categoryId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/CategoryId'
+
+
+
+
   securitySchemes:
     bearerAuth:                # ← choose any name you like
       type: http
       scheme: bearer           # ← tells tools to use the header
       bearerFormat: JWT        # ← purely informational
   schemas:
-    TransactionInput:
+
+    TransactionSearchQuery:
       type: object
-      required:
-        - announcementDate
-        - realisationDate
-        - amount
-        - currency
-        - category
-        - description
       properties:
-        announcementDate:
-          type: string
-          format: date
-        realisationDate:
-          type: string
-          format: date
-        amount:
-          type: number
-          format: float
-        currency:
-          type: string
-          example: USD
+        fromYear:
+          $ref: '#/components/schemas/FromYear'
+        toYear:
+          $ref: '#/components/schemas/ToYear'
+        minAmount:
+          $ref: '#/components/schemas/MinAmount'
+        maxAmount:
+          $ref: '#/components/schemas/MaxAmount'
         category:
-          type: string
-        description:
-          type: string
+          $ref: '#/components/schemas/Category'
+        receiver:
+          $ref: '#/components/schemas/Receiver'
+
+    CreateTransactionReq:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/Name'
+        date:
+          $ref: '#/components/schemas/Timestamp'
+        category:
+          $ref: '#/components/schemas/Category'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        notes:
+          $ref: '#/components/schemas/Notes'
+
+    UpdateTransactionReq:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Transaction'
+
+    CreateCategoryReq:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/Name'
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        color:
+          $ref: '#/components/schemas/Timestamp'
+        category:
+          $ref: '#/components/schemas/Category'
+
+    UpdateCategoryReq:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Category'
 
     Transaction:
-      allOf:
-        - $ref: '#/components/schemas/TransactionInput'
-        - type: object
-          properties:
-            id:
-              type: string
-            type:
-              type: string
-              enum: [income, expense]
-
-    User:
       type: object
       properties:
-        userId:
-          type: string
+        transactionId:
+          $ref: '#/components/schemas/TransactionId'
+        name:
+          $ref: '#/components/schemas/Name'
+        date:
+          $ref: '#/components/schemas/Timestamp'
+        category:
+          $ref: '#/components/schemas/Category'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        notes:
+          $ref: '#/components/schemas/Notes'
+
+    Category:
+      type: object
+      properties:
+        categoryId:
+          $ref: '#/components/schemas/CategoryId'
+        name:
+          $ref: '#/components/schemas/Name'
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        color:
+          $ref: '#/components/schemas/Color'
+        transactions:
+          type: integer
+          description: Number of transactions in this category
+
+
+    CategoryId:
+      type: number
+    TransactionId:
+      type: number
+    Name:
+      type: string
+    Timestamp:
+      type: string
+      format: date
+    Amount:
+      type: number
+      format: float
+    Notes:
+      type: string
+    Color:
+      type: string
+      format: color
+      example: '#000000'
+
+
+    TransactionType:
+      type: string
+      enum:
+        - INCOME
+        - OUTCOME
+
+    FromYear:
+      type: string
+      format: date
+      description: Start year of the search range (e.g., 2020)
+
+    ToYear:
+      type: string
+      format: date
+      description: End year of the search range (e.g., 2023)
+
+    MinAmount:
+      type: number
+      format: double
+      description: Minimum transaction amount
+
+    MaxAmount:
+      type: number
+      format: double
+      description: Maximum transaction amount
+
+    Receiver:
+      type: string
+      description: Receiver of the transaction
