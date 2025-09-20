@@ -39,7 +39,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TransactionEntry'
+                  $ref: '#/components/schemas/TransactionDto'
     post:
       operationId: createTransaction
       description: Create a new transaction.
@@ -65,7 +65,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TransactionEntry'
+                $ref: '#/components/schemas/TransactionDto'
 
     delete:
       operationId: deleteTransaction
@@ -73,8 +73,8 @@ paths:
       tags:
         - Transaction
       summary: Delete transaction
-      parameters:
-        - $ref: '#/components/parameters/TransactionId'
+      requestBody:
+        $ref: '#/components/requestBodies/ResourceDeleteRequest'
       responses:
         200:
           description: Transaction deleted successfully
@@ -94,7 +94,7 @@ paths:
             application/json:
               schema:
                 items:
-                  $ref: '#/components/schemas/CategoryEntry'
+                  $ref: '#/components/schemas/CategoryDto'
     post:
       operationId: createCategory
       description: Create a new category.
@@ -109,7 +109,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CategoryEntry'
+                $ref: '#/components/schemas/CategoryDto'
     put:
       operationId: updateCategory
       description: Update an existing category.
@@ -124,20 +124,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CategoryEntry'
+                $ref: '#/components/schemas/CategoryDto'
     delete:
       operationId: deleteCategory
       description: Delete an existing category.
+      summary: Delete Category
       tags:
         - Category
-      parameters:
-        - $ref: '#/components/parameters/CategoryId'
+      requestBody:
+        $ref: '#/components/requestBodies/ResourceDeleteRequest'
       responses:
         200:
           description: Transaction deleted successfully
-
-
-
 
 components:
   requestBodies:
@@ -173,13 +171,21 @@ components:
       description: Category to be updated
       required: true
 
+    ResourceDeleteRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DeleteResourceReq'
+      description: Id to be deleted
+      required: true
+
   responses:
     CreateTransactionResponse:
       description: Transaction created
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/TransactionEntry'
+            $ref: '#/components/schemas/TransactionDto'
 
   parameters:
     FromYearParam:
@@ -210,27 +216,13 @@ components:
       name: category
       in: query
       schema:
-        $ref: '#/components/schemas/CategoryEntry'
+        $ref: '#/components/schemas/CategoryDto'
 
     ReceiverParam:
       name: receiver
       in: query
       schema:
         $ref: '#/components/schemas/Receiver'
-
-    TransactionId:
-      name: transactionId
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/ID'
-
-    CategoryId:
-      name: id
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/ID'
 
 
 
@@ -254,7 +246,7 @@ components:
         maxAmount:
           $ref: '#/components/schemas/MaxAmount'
         category:
-          $ref: '#/components/schemas/CategoryEntry'
+          $ref: '#/components/schemas/CategoryDto'
         receiver:
           $ref: '#/components/schemas/Receiver'
 
@@ -266,7 +258,7 @@ components:
         date:
           $ref: '#/components/schemas/Timestamp'
         category:
-          $ref: '#/components/schemas/CategoryEntry'
+          $ref: '#/components/schemas/CategoryDto'
         amount:
           $ref: '#/components/schemas/Amount'
         notes:
@@ -275,7 +267,7 @@ components:
     UpdateTransactionReq:
       type: object
       allOf:
-        - $ref: '#/components/schemas/TransactionEntry'
+        - $ref: '#/components/schemas/TransactionDto'
 
     CreateCategoryReq:
       type: object
@@ -287,14 +279,22 @@ components:
         color:
           $ref: '#/components/schemas/Color'
         category:
-          $ref: '#/components/schemas/CategoryEntry'
+          $ref: '#/components/schemas/CategoryDto'
 
     UpdateCategoryReq:
       type: object
       allOf:
-        - $ref: '#/components/schemas/CategoryEntry'
+        - $ref: '#/components/schemas/CategoryDto'
 
-    TransactionEntry:
+    DeleteResourceReq:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/ID'
+      required:
+        - id
+
+    TransactionDto:
       type: object
       required:
         - id
@@ -311,13 +311,13 @@ components:
         date:
           $ref: '#/components/schemas/Timestamp'
         category:
-          $ref: '#/components/schemas/CategoryEntry'
+          $ref: '#/components/schemas/CategoryDto'
         amount:
           $ref: '#/components/schemas/Amount'
         notes:
           $ref: '#/components/schemas/Notes'
 
-    CategoryEntry:
+    CategoryDto:
       type: object
       required:
         - id
@@ -338,6 +338,7 @@ components:
           description: Number of transactions in this category
 
     ID:
+      title: id
       type: integer
       description: Unique identifier for the resource
     Name:
