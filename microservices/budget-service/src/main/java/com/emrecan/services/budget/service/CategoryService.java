@@ -1,18 +1,19 @@
 package com.emrecan.services.budget.service;
 
-import com.emrecan.services.budget.model.CategoryEntry;
+import com.emrecan.services.budget.model.CategoryDto;
 import com.emrecan.services.budget.model.CreateCategoryReq;
+import com.emrecan.services.budget.model.UpdateCategoryReq;
 import java.util.List;
 
 public interface CategoryService {
 
-  List<CategoryEntry> getCategories(String userId);
+  List<CategoryDto> getCategories(String userId);
 
-  CategoryEntry saveCategory(String userId, CreateCategoryReq category);
+  CategoryDto saveCategory(String userId, CreateCategoryReq createCategoryReq);
 
-  CategoryEntry updateCategory(CategoryEntry category);
+  CategoryDto updateCategory(UpdateCategoryReq updateCategoryReq);
 
-  CategoryEntry deleteCategory(Integer id);
+  CategoryDto deleteCategory(Integer id);
 
-  CategoryEntry findCategoryById(Integer id);
+  CategoryDto findCategoryById(Integer id);
 }

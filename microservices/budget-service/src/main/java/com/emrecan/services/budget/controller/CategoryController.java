@@ -19,24 +19,25 @@ public class CategoryController extends BaseController implements CategoriesApi 
   }
 
   @Override
-  public ResponseEntity<CategoryEntry> createCategory(CreateCategoryReq createCategoryReq) {
+  public ResponseEntity<CategoryDto> createCategory(CreateCategoryReq createCategoryReq) {
     return ResponseEntity.ok().body(categoryService.saveCategory(getUserId(), createCategoryReq));
   }
 
+  // Accept deletionId in body because of generator bug
   @Override
-  public ResponseEntity<Void> deleteCategory(Integer id) {
-    return CategoriesApi.super.deleteCategory(id);
+  public ResponseEntity<Void> deleteCategory(DeleteResourceReq deleteResourceReq) {
+    return CategoriesApi.super.deleteCategory(deleteResourceReq);
   }
 
   @Override
-  public ResponseEntity<List<CategoryEntry>> getCategories() {
-    List<CategoryEntry> categories = categoryService.getCategories(getUserId());
+  public ResponseEntity<List<CategoryDto>> getCategories() {
+    List<CategoryDto> categories = categoryService.getCategories(getUserId());
 
     return ResponseEntity.ok(categories);
   }
 
   @Override
-  public ResponseEntity<CategoryEntry> updateCategory(UpdateCategoryReq updateTransactionReq) {
+  public ResponseEntity<CategoryDto> updateCategory(UpdateCategoryReq updateTransactionReq) {
     return CategoriesApi.super.updateCategory(updateTransactionReq);
   }
 }

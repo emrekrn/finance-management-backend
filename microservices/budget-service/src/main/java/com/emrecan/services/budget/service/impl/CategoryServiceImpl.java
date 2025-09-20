@@ -1,10 +1,9 @@
 package com.emrecan.services.budget.service.impl;
 
+import com.emrecan.services.budget.mapper.CategoryMapper;
 import com.emrecan.services.budget.model.*;
-import com.emrecan.services.budget.model.core.TransactionTypeEnum;
 import com.emrecan.services.budget.repository.CategoryRepository;
 import com.emrecan.services.budget.service.CategoryService;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,61 +19,36 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  public List<CategoryEntry> getCategories(String userId) {
-    List<CategoryEntry> categories = new ArrayList<>();
-    this.categoryRepository
-        .findByUserId(userId)
-        .forEach(
-            category -> {
-              categories.add(
-                  new CategoryEntry(
-                      category.getId(),
-                      category.getName(),
-                      TransactionType.INCOME,
-                      category.getColor(),
-                      category.getTransactions()));
-            });
+  public List<CategoryDto> getCategories(String userId) {
+    List<CategoryDto> categories =
+        CategoryMapper.INSTANCE.mapCategoriesToDtos(this.categoryRepository.findByUserId(userId));
     return categories;
   }
 
   @Override
-  public CategoryEntry saveCategory(String userId, CreateCategoryReq category) {
-    Category entry =
-        Category.builder()
-            .name(category.getName())
-            .type(TransactionTypeEnum.INCOME)
-            .color(category.getColor())
-            .userId(userId)
-            .build();
-    Category createdEntry = this.categoryRepository.saveAndFlush(entry);
-
-    CategoryEntry createdCategory =
-        new CategoryEntry(
-            createdEntry.getId(),
-            createdEntry.getName(),
-            TransactionType.INCOME,
-            createdEntry.getColor(),
-            createdEntry.getTransactions());
+  public CategoryDto saveCategory(String userId, CreateCategoryReq createCategoryReq) {
+    Category category = CategoryMapper.INSTANCE.mapSaveRequestToCategory(userId, createCategoryReq);
+    Category createdCategory = this.categoryRepository.saveAndFlush(category);
 
     log.info(
         "Created category with id {} and name {}",
         createdCategory.getId(),
         createdCategory.getName());
-    return createdCategory;
+    return CategoryMapper.INSTANCE.mapCategoryToDto(createdCategory);
   }
 
   @Override
-  public CategoryEntry updateCategory(CategoryEntry category) {
+  public CategoryDto updateCategory(UpdateCategoryReq updateCategoryReq) {
     return null;
   }
 
   @Override
-  public CategoryEntry deleteCategory(Integer id) {
+  public CategoryDto deleteCategory(Integer id) {
     return null;
   }
 
   @Override
-  public CategoryEntry findCategoryById(Integer id) {
+  public CategoryDto findCategoryById(Integer id) {
     return null;
   }
 }
