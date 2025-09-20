@@ -8,7 +8,7 @@ info:
 
 # Apply the scheme to **every** operation in the spec
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
 
 servers:
   - url: http://localhost:8080/api
@@ -39,7 +39,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Transaction'
+                  $ref: '#/components/schemas/TransactionEntry'
     post:
       operationId: createTransaction
       description: Create a new transaction.
@@ -65,7 +65,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transaction'
+                $ref: '#/components/schemas/TransactionEntry'
 
     delete:
       operationId: deleteTransaction
@@ -94,7 +94,7 @@ paths:
             application/json:
               schema:
                 items:
-                  $ref: '#/components/schemas/Category'
+                  $ref: '#/components/schemas/CategoryEntry'
     post:
       operationId: createCategory
       description: Create a new category.
@@ -109,7 +109,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Category'
+                $ref: '#/components/schemas/CategoryEntry'
     put:
       operationId: updateCategory
       description: Update an existing category.
@@ -124,7 +124,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Category'
+                $ref: '#/components/schemas/CategoryEntry'
     delete:
       operationId: deleteCategory
       description: Delete an existing category.
@@ -179,7 +179,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Transaction'
+            $ref: '#/components/schemas/TransactionEntry'
 
   parameters:
     FromYearParam:
@@ -210,7 +210,7 @@ components:
       name: category
       in: query
       schema:
-        $ref: '#/components/schemas/Category'
+        $ref: '#/components/schemas/CategoryEntry'
 
     ReceiverParam:
       name: receiver
@@ -236,7 +236,7 @@ components:
 
 
   securitySchemes:
-    bearerAuth:                # ← choose any name you like
+    bearerAuth: # ← choose any name you like
       type: http
       scheme: bearer           # ← tells tools to use the header
       bearerFormat: JWT        # ← purely informational
@@ -254,7 +254,7 @@ components:
         maxAmount:
           $ref: '#/components/schemas/MaxAmount'
         category:
-          $ref: '#/components/schemas/Category'
+          $ref: '#/components/schemas/CategoryEntry'
         receiver:
           $ref: '#/components/schemas/Receiver'
 
@@ -266,7 +266,7 @@ components:
         date:
           $ref: '#/components/schemas/Timestamp'
         category:
-          $ref: '#/components/schemas/Category'
+          $ref: '#/components/schemas/CategoryEntry'
         amount:
           $ref: '#/components/schemas/Amount'
         notes:
@@ -275,7 +275,7 @@ components:
     UpdateTransactionReq:
       type: object
       allOf:
-        - $ref: '#/components/schemas/Transaction'
+        - $ref: '#/components/schemas/TransactionEntry'
 
     CreateCategoryReq:
       type: object
@@ -287,14 +287,14 @@ components:
         color:
           $ref: '#/components/schemas/Color'
         category:
-          $ref: '#/components/schemas/Category'
+          $ref: '#/components/schemas/CategoryEntry'
 
     UpdateCategoryReq:
       type: object
       allOf:
-        - $ref: '#/components/schemas/Category'
+        - $ref: '#/components/schemas/CategoryEntry'
 
-    Transaction:
+    TransactionEntry:
       type: object
       required:
         - id
@@ -311,13 +311,13 @@ components:
         date:
           $ref: '#/components/schemas/Timestamp'
         category:
-          $ref: '#/components/schemas/Category'
+          $ref: '#/components/schemas/CategoryEntry'
         amount:
           $ref: '#/components/schemas/Amount'
         notes:
           $ref: '#/components/schemas/Notes'
 
-    Category:
+    CategoryEntry:
       type: object
       required:
         - id

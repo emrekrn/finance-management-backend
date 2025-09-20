@@ -1,9 +1,6 @@
 package com.emrecan.services.budget.service.impl;
 
-import com.emrecan.services.budget.model.Category;
-import com.emrecan.services.budget.model.CategoryEntry;
-import com.emrecan.services.budget.model.CreateCategoryReq;
-import com.emrecan.services.budget.model.TransactionType;
+import com.emrecan.services.budget.model.*;
 import com.emrecan.services.budget.model.core.TransactionTypeEnum;
 import com.emrecan.services.budget.repository.CategoryRepository;
 import com.emrecan.services.budget.service.CategoryService;
@@ -23,14 +20,14 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  public List<Category> getCategories(String userId) {
-    List<Category> categories = new ArrayList<>();
+  public List<CategoryEntry> getCategories(String userId) {
+    List<CategoryEntry> categories = new ArrayList<>();
     this.categoryRepository
         .findByUserId(userId)
         .forEach(
             category -> {
               categories.add(
-                  new Category(
+                  new CategoryEntry(
                       category.getId(),
                       category.getName(),
                       TransactionType.INCOME,
@@ -41,18 +38,18 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  public Category saveCategory(String userId, CreateCategoryReq category) {
-    CategoryEntry entry =
-        CategoryEntry.builder()
+  public CategoryEntry saveCategory(String userId, CreateCategoryReq category) {
+    Category entry =
+        Category.builder()
             .name(category.getName())
             .type(TransactionTypeEnum.INCOME)
             .color(category.getColor())
             .userId(userId)
             .build();
-    CategoryEntry createdEntry = this.categoryRepository.saveAndFlush(entry);
+    Category createdEntry = this.categoryRepository.saveAndFlush(entry);
 
-    Category createdCategory =
-        new Category(
+    CategoryEntry createdCategory =
+        new CategoryEntry(
             createdEntry.getId(),
             createdEntry.getName(),
             TransactionType.INCOME,
@@ -67,17 +64,17 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  public Category updateCategory(Category category) {
+  public CategoryEntry updateCategory(CategoryEntry category) {
     return null;
   }
 
   @Override
-  public Category deleteCategory(Integer id) {
+  public CategoryEntry deleteCategory(Integer id) {
     return null;
   }
 
   @Override
-  public Category findCategoryById(Integer id) {
+  public CategoryEntry findCategoryById(Integer id) {
     return null;
   }
 }

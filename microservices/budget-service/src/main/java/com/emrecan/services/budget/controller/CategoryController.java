@@ -19,8 +19,7 @@ public class CategoryController extends BaseController implements CategoriesApi 
   }
 
   @Override
-  public ResponseEntity<Category> createCategory(CreateCategoryReq createCategoryReq) {
-
+  public ResponseEntity<CategoryEntry> createCategory(CreateCategoryReq createCategoryReq) {
     return ResponseEntity.ok().body(categoryService.saveCategory(getUserId(), createCategoryReq));
   }
 
@@ -30,14 +29,14 @@ public class CategoryController extends BaseController implements CategoriesApi 
   }
 
   @Override
-  public ResponseEntity<List<Category>> getCategories() {
-    List<Category> categories = categoryService.getCategories(getUserId());
+  public ResponseEntity<List<CategoryEntry>> getCategories() {
+    List<CategoryEntry> categories = categoryService.getCategories(getUserId());
 
     return ResponseEntity.ok(categories);
   }
 
   @Override
-  public ResponseEntity<Category> updateCategory(UpdateCategoryReq updateTransactionReq) {
+  public ResponseEntity<CategoryEntry> updateCategory(UpdateCategoryReq updateTransactionReq) {
     return CategoriesApi.super.updateCategory(updateTransactionReq);
   }
 }

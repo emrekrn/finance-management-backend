@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 @Entity
 @Table(name = "Category")
-public class CategoryEntry {
+public class Category {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
